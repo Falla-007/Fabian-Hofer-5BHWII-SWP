@@ -74,11 +74,12 @@ def klassifiziere_hand(hand):
 
 def simuliere_pokerhände(anzahl_simulationen=100000):
     kombinations_anzahlen = {
-        'Strassen Flush': 0,
+        'Royal Flush': 0,
+        'Straigt Flush': 0,
         'Vier Gleiche': 0,
         'Full House': 0,
         'Flush': 0,
-        'Strasse': 0,
+        'Straigt': 0,
         'Drei Gleiche': 0,
         'Zwei Paare': 0,
         'Paar': 0,
