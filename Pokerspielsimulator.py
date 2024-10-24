@@ -1,5 +1,4 @@
 import random
-from collections import Counter
 
 farben = ['Herz', 'Karo', 'Kreuz', 'Pik']
 werte = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'B', 'D', 'K', 'A']
@@ -10,50 +9,45 @@ def zufällige_hand():
     return random.sample(deck, 5)
 
 def ist_paar(hand):
-    werte_der_hand = [wert for wert, i in hand]
-    return any(anzahl == 2 for anzahl in Counter(werte_der_hand).values())
+    werte_der_hand = [wert for wert, _ in hand]
+    return any(werte_der_hand.count(wert) == 2 for wert in werte_der_hand)
 
 def ist_zwei_paare(hand):
-    werte_der_hand = [wert for wert, i in hand]
-    paar_anzahl = list(Counter(werte_der_hand).values()).count(2)
+    werte_der_hand = [wert for wert, _ in hand]
+    paar_anzahl = sum(1 for wert in set(werte_der_hand) if werte_der_hand.count(wert) == 2)
     return paar_anzahl == 2
 
 def ist_drei_gleiche(hand):
-    werte_der_hand = [wert for wert, i in hand]
-    return 3 in Counter(werte_der_hand).values()
+    werte_der_hand = [wert for wert, _ in hand]
+    return any(werte_der_hand.count(wert) == 3 for wert in werte_der_hand)
+
+def ist_full_house(hand):
+    werte_der_hand = [wert for wert, _ in hand]
+    hat_drei = any(werte_der_hand.count(wert) == 3 for wert in set(werte_der_hand))
+    hat_zwei = any(werte_der_hand.count(wert) == 2 for wert in set(werte_der_hand))
+    return hat_drei and hat_zwei
+
+def ist_vier_gleiche(hand):
+    werte_der_hand = [wert for wert, _ in hand]
+    return any(werte_der_hand.count(wert) == 4 for wert in werte_der_hand)
+
+def ist_flush(hand):
+    farben_der_hand = [farbe for _, farbe in hand]
+    return len(set(farben_der_hand)) == 1
 
 def ist_strasse(hand):
     werte_index = {wert: i for i, wert in enumerate(werte, start=2)}
-    sortierte_werte = sorted([werte_index[wert] for wert, i in hand])
+    sortierte_werte = sorted([werte_index[wert] for wert, _ in hand])
     return all(sortierte_werte[i] + 1 == sortierte_werte[i + 1] for i in range(4))
 
-def ist_flush(hand):
-    farben_der_hand = [farbe for i, farbe in hand]
-    return len(set(farben_der_hand)) == 1
-
-def ist_full_house(hand):
-    werte_der_hand = [wert for wert, i in hand]
-    anzahlen = list(Counter(werte_der_hand).values())
-    return 2 in anzahlen and 3 in anzahlen
-
-def ist_vier_gleiche(hand):
-    werte_der_hand = [wert for wert, i in hand]
-    return 4 in Counter(werte_der_hand).values()
-
-def ist_strassen_flush(hand):
-    return ist_strasse(hand) and ist_flush(hand)
-
 def ist_royal_flush(hand):
-
     royal_flush_werte = {'10', 'B', 'D', 'K', 'A'}
-    
-    werte_der_hand = {wert for wert, i in hand}
-    farben_der_hand = {farbe for i, farbe in hand}
-
+    werte_der_hand = {wert for wert, _ in hand}
+    farben_der_hand = {farbe for _, farbe in hand}
     hat_royal_flush_werte = all(wert in werte_der_hand for wert in royal_flush_werte)
-
     hat_eine_farbe = len(farben_der_hand) == 1
     return hat_eine_farbe and hat_royal_flush_werte
+
 
 def klassifiziere_hand(hand):
         if ist_royal_flush(hand):
@@ -79,14 +73,25 @@ def klassifiziere_hand(hand):
 
 
 def simuliere_pokerhände(anzahl_simulationen=100000):
-    kombinations_anzahlen = Counter()
+    kombinations_anzahlen = {
+        'Strassen Flush': 0,
+        'Vier Gleiche': 0,
+        'Full House': 0,
+        'Flush': 0,
+        'Strasse': 0,
+        'Drei Gleiche': 0,
+        'Zwei Paare': 0,
+        'Paar': 0,
+        'Hohe Karte': 0
+    }
 
-    for i in range(anzahl_simulationen):
+    for _ in range(anzahl_simulationen):
         hand = zufällige_hand()
         kombination = klassifiziere_hand(hand)
         kombinations_anzahlen[kombination] += 1
 
     gesamt_anzahl_hände = sum(kombinations_anzahlen.values())
+    
     for kombination, anzahl in kombinations_anzahlen.items():
         prozentsatz = (anzahl / gesamt_anzahl_hände) * 100
         print(f"{kombination}: {anzahl} Hände ({prozentsatz:.2f}%)")
