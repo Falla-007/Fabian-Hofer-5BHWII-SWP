@@ -40,6 +40,9 @@ def ist_strasse(hand):
     sortierte_werte = sorted([werte_index[wert] for wert, _ in hand])
     return all(sortierte_werte[i] + 1 == sortierte_werte[i + 1] for i in range(4))
 
+def ist_strassen_flush(hand):
+    return ist_strasse(hand) and ist_flush(hand)
+
 def ist_royal_flush(hand):
     royal_flush_werte = {'10', 'B', 'D', 'K', 'A'}
     werte_der_hand = {wert for wert, i in hand}
