@@ -9,30 +9,30 @@ def zufällige_hand():
     return random.sample(deck, 5)
 
 def ist_paar(hand):
-    werte_der_hand = [wert for wert, _ in hand]
+    werte_der_hand = [wert for wert, i in hand]
     return any(werte_der_hand.count(wert) == 2 for wert in werte_der_hand)
 
 def ist_zwei_paare(hand):
-    werte_der_hand = [wert for wert, _ in hand]
+    werte_der_hand = [wert for wert, i in hand]
     paar_anzahl = sum(1 for wert in set(werte_der_hand) if werte_der_hand.count(wert) == 2)
     return paar_anzahl == 2
 
 def ist_drei_gleiche(hand):
-    werte_der_hand = [wert for wert, _ in hand]
+    werte_der_hand = [wert for wert, i in hand]
     return any(werte_der_hand.count(wert) == 3 for wert in werte_der_hand)
 
 def ist_full_house(hand):
-    werte_der_hand = [wert for wert, _ in hand]
+    werte_der_hand = [wert for wert, i in hand]
     hat_drei = any(werte_der_hand.count(wert) == 3 for wert in set(werte_der_hand))
     hat_zwei = any(werte_der_hand.count(wert) == 2 for wert in set(werte_der_hand))
     return hat_drei and hat_zwei
 
 def ist_vier_gleiche(hand):
-    werte_der_hand = [wert for wert, _ in hand]
+    werte_der_hand = [wert for wert, i in hand]
     return any(werte_der_hand.count(wert) == 4 for wert in werte_der_hand)
 
 def ist_flush(hand):
-    farben_der_hand = [farbe for _, farbe in hand]
+    farben_der_hand = [farbe for i, farbe in hand]
     return len(set(farben_der_hand)) == 1
 
 def ist_strasse(hand):
@@ -42,8 +42,8 @@ def ist_strasse(hand):
 
 def ist_royal_flush(hand):
     royal_flush_werte = {'10', 'B', 'D', 'K', 'A'}
-    werte_der_hand = {wert for wert, _ in hand}
-    farben_der_hand = {farbe for _, farbe in hand}
+    werte_der_hand = {wert for wert, i in hand}
+    farben_der_hand = {farbe for i, farbe in hand}
     hat_royal_flush_werte = all(wert in werte_der_hand for wert in royal_flush_werte)
     hat_eine_farbe = len(farben_der_hand) == 1
     return hat_eine_farbe and hat_royal_flush_werte
@@ -86,7 +86,7 @@ def simuliere_pokerhände(anzahl_simulationen=100000):
         'Hohe Karte': 0
     }
 
-    for _ in range(anzahl_simulationen):
+    for i in range(anzahl_simulationen):
         hand = zufällige_hand()
         kombination = klassifiziere_hand(hand)
         kombinations_anzahlen[kombination] += 1
